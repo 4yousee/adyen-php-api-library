@@ -42,6 +42,8 @@ class Client
     const ENDPOINT_DISPUTE_SERVICE_TEST = "https://ca-test.adyen.com/ca/services/DisputeService";
     const ENDPOINT_DISPUTE_SERVICE_LIVE = "https://ca-live.adyen.com/ca/services/DisputeService";
 
+    const ENDPOINT_MOCK = "http://localhost:8090";
+
     /**
      * @var Config|ConfigInterface
      */
@@ -56,6 +58,11 @@ class Client
      * @var LoggerInterface|null
      */
     private $logger;
+
+    /**
+     * @var String|null
+     */
+    private $mockUrl;
 
     /**
      * Client constructor.
@@ -137,7 +144,20 @@ class Client
      */
     public function setEnvironment($environment, $liveEndpointUrlPrefix = null)
     {
-        if ($environment == \Adyen\Environment::TEST) {
+        if ($environment == \Adyen\Environment::MOCK) {
+            $this->config->set('environment', \Adyen\Environment::MOCK);
+            if (!isset($this->mockUrl)) {
+                $this->mockUrl = self::ENDPOINT_MOCK;
+            }
+            $this->config->set('endpoint', $this->mockUrl);
+            $this->config->set('endpointDirectorylookup', $this->mockUrl."/directory");
+            $this->config->set('endpointTerminalCloud', $this->mockUrl."/terminal");
+            $this->config->set('endpointCheckout', $this->mockUrl."/checkout");
+            $this->config->set('endpointNotification', $this->mockUrl."/notification");
+            $this->config->set('endpointAccount', $this->mockUrl."/account");
+            $this->config->set('endpointFund', $this->mockUrl."/fund");
+            $this->config->set('endpointDisputeService', $this->mockUrl."/dispute");
+        } elseif ($environment == \Adyen\Environment::TEST) {
             $this->config->set('environment', \Adyen\Environment::TEST);
             $this->config->set('endpoint', self::ENDPOINT_TEST);
             $this->config->set('endpointDirectorylookup', self::ENDPOINT_TEST_DIRECTORY_LOOKUP);
@@ -456,5 +476,10 @@ class Client
         $logger->pushHandler(new StreamHandler('php://stderr', Logger::NOTICE));
 
         return $logger;
+    }
+
+    public function setMockUrl($mockUrl)
+    {
+        $this->mockUrl = $mockUrl;
     }
 }
