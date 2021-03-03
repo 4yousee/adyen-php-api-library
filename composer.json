@@ -1,7 +1,7 @@
 {
-  "name": "4yousee/php-api-library",
+  "name": "4yousee/adyen-lib-with-mock",
   "type": "library",
-  "description": "A PHP client library for accessing Adyen APIs",
+  "description": "A PHP client library for accessing Adyen APIs with mock for integration test",
   "keywords": [
     "adyen"
   ],
